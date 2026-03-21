@@ -1,0 +1,20 @@
+[project]
+name = "fastapi-template"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Vitaliy Knysh",email = "vitaliy.knysh1234@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi (>=0.135.1,<0.136.0)",
+    "uvicorn (>=0.42.0,<0.43.0)"
+]
+
+[tool.poetry]
+packages = [{include = "fastapi_template", from = "src"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

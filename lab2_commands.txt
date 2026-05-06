@@ -1,0 +1,18 @@
+Lab 2 command sequence (Windows PowerShell)
+
+Production branch (prod):
+  git switch prod
+  docker compose up -d --build
+  docker compose ps
+  docker compose logs -f --tail=100 web
+  docker compose logs -f --tail=100 db
+  docker compose down
+
+Dev branch (dev):
+  git switch dev
+  docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+  docker compose -f docker-compose.yml -f docker-compose.dev.yml ps
+  docker compose -f docker-compose.yml -f docker-compose.dev.yml logs -f --tail=100 web
+  docker compose -f docker-compose.yml -f docker-compose.dev.yml exec web pip list
+  docker compose -f docker-compose.yml -f docker-compose.dev.yml down
+

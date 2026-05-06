@@ -2,5 +2,7 @@ services:
   web:
     volumes:
       - ./:/app
-    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    environment:
+      UVICORN_RELOAD: "1"
+    command: ["python", "entrypoint.py"]
 

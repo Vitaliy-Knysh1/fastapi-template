@@ -1,4 +1,5 @@
-from app.models import post, user
+from sqlalchemy.orm import DeclarativeBase
 
-__all__ = ["post", "user"]
 
+class Base(DeclarativeBase):
+    pass

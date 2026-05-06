@@ -1,12 +1,21 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 
 
-class UserCreate(BaseModel):
-    email: str = Field(..., min_length=3, max_length=320)
+class UserBase(BaseModel):
+    email: EmailStr = Field(..., max_length=320)
     name: str = Field(..., min_length=1, max_length=200)
 
 
-class UserPublic(BaseModel):
+class UserCreate(UserBase):
+    pass
+
+
+class UserUpdate(BaseModel):
+    email: EmailStr | None = Field(None, max_length=320)
+    name: str | None = Field(None, min_length=1, max_length=200)
+
+
+class UserPublic(UserBase):
     id: int
-    email: str
-    name: str
+
+    model_config = {"from_attributes": True}

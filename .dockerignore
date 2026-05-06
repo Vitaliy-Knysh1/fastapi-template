@@ -2,7 +2,9 @@ __pycache__/
 *.pyc
 .env
 .venv
-poetry.lock
 .idea/
 .vscode/
-db.sqlite3
+.git/
+.pytest_cache/
+poetry.lock
+

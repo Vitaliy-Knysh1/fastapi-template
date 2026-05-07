@@ -76,6 +76,6 @@ async def delete_game(db: AsyncSession, game_id: int) -> bool:
     game = await get_game(db, game_id)
     if game is None:
         return False
-    db.delete(game)
+    await db.delete(game)
     await db.flush()
     return True

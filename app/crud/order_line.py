@@ -69,7 +69,7 @@ async def delete_order_line(db: AsyncSession, line_id: int) -> bool:
     if row is None:
         return False
     order_id = row.order_id
-    db.delete(row)
+    await db.delete(row)
     await db.flush()
     await order_crud.refresh_order_total(db, order_id)
     return True

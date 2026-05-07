@@ -90,6 +90,6 @@ async def delete_order(db: AsyncSession, order_id: int) -> bool:
     order = await db.get(Order, order_id)
     if order is None:
         return False
-    db.delete(order)
+    await db.delete(order)
     await db.flush()
     return True

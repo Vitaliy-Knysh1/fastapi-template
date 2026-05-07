@@ -42,6 +42,6 @@ async def delete_profile(db: AsyncSession, profile_id: int) -> bool:
     profile = await get_profile(db, profile_id)
     if profile is None:
         return False
-    db.delete(profile)
+    await db.delete(profile)
     await db.flush()
     return True

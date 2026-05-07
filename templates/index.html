@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Videogame Store</h1>
+  <p class="lead">Browse titles below — prices in UAH.</p>
+</section>
+
+<section class="catalog" aria-label="Game catalog">
+  <div class="catalog-grid">
+    {% for game in games %}
+    <article class="game-card">
+      <img
+        class="game-cover"
+        src="{{ game.image_url }}"
+        alt="{{ game.title }}"
+        width="410"
+        height="550"
+        loading="lazy"
+      />
+      <h2 class="game-title">{{ game.title }}</h2>
+      <p class="game-price">{{ game.price_uah }}&nbsp;₴</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

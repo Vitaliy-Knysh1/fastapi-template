@@ -13,6 +13,30 @@ async def create_user(db: AsyncSession, payload: UserCreate) -> User:
     return user
 
 
+async def create_user_with_password(
+    db: AsyncSession,
+    *,
+    email: str,
+    name: str,
+    password_hash: str,
+) -> User:
+    user = User(email=email, name=name, password_hash=password_hash)
+    db.add(user)
+    await db.flush()
+    await db.refresh(user)
+    return user
+
+
+async def set_password_hash(db: AsyncSession, user_id: int, password_hash: str) -> User | None:
+    user = await get_user(db, user_id)
+    if user is None:
+        return None
+    user.password_hash = password_hash
+    await db.flush()
+    await db.refresh(user)
+    return user
+
+
 async def get_user(db: AsyncSession, user_id: int) -> User | None:
     return await db.get(User, user_id)
 

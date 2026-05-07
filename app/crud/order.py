@@ -49,6 +49,24 @@ async def list_orders(db: AsyncSession, skip: int = 0, limit: int = 100) -> list
     return list(result.scalars().unique().all())
 
 
+async def list_orders_for_user(
+    db: AsyncSession,
+    user_id: int,
+    *,
+    skip: int = 0,
+    limit: int = 100,
+) -> list[Order]:
+    result = await db.execute(
+        select(Order)
+        .where(Order.user_id == user_id)
+        .offset(skip)
+        .limit(limit)
+        .order_by(Order.id.desc())
+        .options(selectinload(Order.lines)),
+    )
+    return list(result.scalars().unique().all())
+
+
 async def update_order(db: AsyncSession, order_id: int, payload: OrderUpdate) -> Order | None:
     order = await db.get(Order, order_id)
     if order is None:

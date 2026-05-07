@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}{{ title | default("Store") }}{% endblock %} · Videogame Store</title>
+  <link rel="stylesheet" href="/static/style.css?v=5" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="/">{{ app_name | default("Videogame Store") }}</a>
+      <nav class="header-actions">
+        {% if user %}
+          <span class="header-greeting">Hi, {{ user.name }}</span>
+          <a class="btn btn-ghost" href="/account">Account</a>
+          <button type="button" class="btn btn-primary" id="btn-logout">Log out</button>
+        {% else %}
+          <a class="btn btn-ghost" href="/login">Log in</a>
+          <a class="btn btn-primary" href="/register">Register</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+  <script>
+    /** Surface FastAPI/Starlette JSON errors, HTML tracebacks, or empty bodies in the UI. */
+    function detailFromHttpBody(text, parsed, status) {
+      if (parsed && typeof parsed === "object" && parsed.detail !== undefined) {
+        const d = parsed.detail;
+        if (typeof d === "string") return d;
+        if (Array.isArray(d)) {
+          return d
+            .map(function (x) {
+              if (x && typeof x === "object" && x.msg) return x.msg;
+              return JSON.stringify(x);
+            })
+            .join(" ");
+        }
+        if (d && typeof d === "object") return JSON.stringify(d);
+      }
+      var t = (text || "").trim();
+      if (t) return t.slice(0, 800);
+      return status ? "HTTP " + status : "Request failed.";
+    }
+    document.getElementById("btn-logout")?.addEventListener("click", async () => {
+      await fetch("/api/v1/auth/logout", { method: "POST", credentials: "include" });
+      window.location.href = "/";
+    });
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

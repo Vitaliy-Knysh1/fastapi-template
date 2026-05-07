@@ -6,6 +6,13 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/app
+      JWT_SECRET: dev-docker-compose-jwt-secret-not-for-production-use-env-in-real-deploy
+      # Pick up code edits without rebuilding the image (dev convenience).
+      UVICORN_RELOAD: "1"
+    volumes:
+      - ./app:/app/app
+      - ./templates:/app/templates
+      - ./static:/app/static
     depends_on:
       - db
 

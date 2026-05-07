@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Account{% endblock %}
+{% block content %}
+<section class="panel">
+  <h1>Your account</h1>
+  {% if user %}
+    <dl class="kv">
+      <dt>Email</dt><dd>{{ user.email }}</dd>
+      <dt>Name</dt><dd>{{ user.name }}</dd>
+      <dt>User ID</dt><dd>{{ user.id }}</dd>
+    </dl>
+    <p class="muted">Protected API examples: <code>/api/v1/account/stats</code>, <code>/api/v1/orders/me</code>, <code>/api/v1/users/me</code>.</p>
+  {% else %}
+    <p>Please <a href="/login">log in</a> to view your account.</p>
+  {% endif %}
+</section>
+{% endblock %}

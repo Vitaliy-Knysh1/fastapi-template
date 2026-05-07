@@ -21,6 +21,7 @@ if ROOT not in sys.path:
 os.environ.setdefault("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/app")
 
 from app.core.config import settings  # noqa: E402
+from app.core.security import hash_password  # noqa: E402
 from app.crud import game as game_crud  # noqa: E402
 from app.crud import genre as genre_crud  # noqa: E402
 from app.crud import order as order_crud  # noqa: E402
@@ -33,7 +34,6 @@ from app.schemas.genre import GenreCreate  # noqa: E402
 from app.schemas.order import OrderCreate  # noqa: E402
 from app.schemas.order_line import OrderLineCreate  # noqa: E402
 from app.schemas.profile import ProfileCreate  # noqa: E402
-from app.schemas.user import UserCreate  # noqa: E402
 
 
 async def seed() -> None:
@@ -47,8 +47,18 @@ async def seed() -> None:
 
     async with AsyncSessionLocal() as db:
         async with db.begin():
-            u1 = await user_crud.create_user(db, UserCreate(email="alice@example.com", name="Alice Player"))
-            u2 = await user_crud.create_user(db, UserCreate(email="bob@example.com", name="Bob Speedrun"))
+            u1 = await user_crud.create_user_with_password(
+                db,
+                email="alice@example.com",
+                name="Alice Player",
+                password_hash=hash_password("alicepass123"),
+            )
+            u2 = await user_crud.create_user_with_password(
+                db,
+                email="bob@example.com",
+                name="Bob Speedrun",
+                password_hash=hash_password("bobpass123"),
+            )
             await profile_crud.create_profile(
                 db,
                 ProfileCreate(user_id=u1.id, display_name="Alice", bio="Loves RPGs", country="UA"),

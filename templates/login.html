@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<section class="panel">
+  <h1>Log in</h1>
+  <p class="muted">Session uses an HTTP-only cookie with a signed JWT.</p>
+  <form id="form-login" class="stack">
+    <label>Email<input type="email" name="email" required autocomplete="email" /></label>
+    <label>Password<input type="password" name="password" required autocomplete="current-password" /></label>
+    <button type="submit" class="btn btn-primary">Log in</button>
+    <p id="login-msg" class="form-msg" aria-live="polite"></p>
+  </form>
+  <p class="muted">New here? <a href="/register">Register</a></p>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("registered") === "1") {
+    document.getElementById("login-msg").textContent = "Account created — log in below.";
+  }
+  document.getElementById("form-login").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const body = {
+      email: String(fd.get("email") || "").trim(),
+      password: String(fd.get("password") || ""),
+    };
+    const msg = document.getElementById("login-msg");
+    msg.textContent = "";
+    try {
+      const res = await fetch("/api/v1/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(body),
+      });
+      const text = await res.text();
+      let parsed = null;
+      try {
+        parsed = JSON.parse(text);
+      } catch (_) {
+        /* non-JSON */
+      }
+      if (!res.ok) {
+        msg.textContent = detailFromHttpBody(text, parsed, res.status);
+        return;
+      }
+      window.location.href = "/";
+    } catch (err) {
+      msg.textContent = "Network error.";
+    }
+  });
+</script>
+{% endblock %}

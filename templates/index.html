@@ -2,7 +2,7 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 <section class="hero">
-  <h1>Videogame Store</h1>
+  <h1>{{ app_name | default("Luckygames Shop") }}</h1>
   <p class="lead">Browse titles below — prices in UAH.</p>
 </section>
 

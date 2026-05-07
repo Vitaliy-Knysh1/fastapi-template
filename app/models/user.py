@@ -9,6 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 
 if TYPE_CHECKING:
+    from app.models.cart_item import CartItem
     from app.models.order import Order
     from app.models.profile import Profile
 
@@ -28,3 +29,7 @@ class User(Base):
     profile: Mapped[Profile | None] = relationship(back_populates="user", uselist=False)
     orders: Mapped[list[Order]] = relationship(back_populates="user")
     game_comments: Mapped[list["GameComment"]] = relationship(back_populates="user")
+    cart_items: Mapped[list["CartItem"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )

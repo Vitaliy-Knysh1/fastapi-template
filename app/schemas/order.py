@@ -11,6 +11,7 @@ class OrderBase(BaseModel):
 
 class OrderCreate(OrderBase):
     user_id: int
+    billing_snapshot_json: str | None = None
 
 
 class OrderUpdate(BaseModel):

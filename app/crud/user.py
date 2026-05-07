@@ -1,5 +1,6 @@
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate
@@ -39,6 +40,13 @@ async def set_password_hash(db: AsyncSession, user_id: int, password_hash: str) 
 
 async def get_user(db: AsyncSession, user_id: int) -> User | None:
     return await db.get(User, user_id)
+
+
+async def get_user_with_profile(db: AsyncSession, user_id: int) -> User | None:
+    result = await db.execute(
+        select(User).options(selectinload(User.profile)).where(User.id == user_id),
+    )
+    return result.scalar_one_or_none()
 
 
 async def get_user_by_email(db: AsyncSession, email: str) -> User | None:

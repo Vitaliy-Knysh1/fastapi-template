@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Cart{% endblock %}
+{% block content %}
+<section class="panel cart-page">
+  <h1>Cart</h1>
+  {% if cart.items %}
+  <ul class="cart-list">
+    {% for line in cart.items %}
+    <li class="cart-row" data-game-id="{{ line.game_id }}">
+      <div class="cart-row-main">
+        <a class="cart-title" href="/games/{{ line.slug }}">{{ line.title }}</a>
+        <span class="muted">{{ line.unit_price_uah }}&nbsp;₴ each</span>
+      </div>
+      <div class="cart-row-actions">
+        <label class="cart-qty">
+          Qty
+          <input type="number" min="1" max="99" value="{{ line.quantity }}" data-qty-input />
+        </label>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="update">Update</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="remove">Remove</button>
+        <span class="cart-line-sum">{{ line.line_subtotal_uah }}&nbsp;₴</span>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  <p class="cart-subtotal"><strong>Subtotal:</strong> {{ cart.subtotal_uah }}&nbsp;₴</p>
+  <div class="cart-footer-actions">
+    <a class="btn btn-primary" href="/checkout">Proceed to checkout</a>
+    <a class="btn btn-ghost" href="/">Continue shopping</a>
+  </div>
+  {% else %}
+  <p class="muted">Your cart is empty.</p>
+  <a class="btn btn-primary" href="/">Browse games</a>
+  {% endif %}
+  <p id="cart-msg" class="form-msg" aria-live="polite"></p>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  async function patchCart(gameId, quantity, msgEl) {
+    const res = await fetch(`/api/v1/cart/items/${gameId}`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ quantity }),
+    });
+    const text = await res.text();
+    let parsed = null;
+    try {
+      parsed = JSON.parse(text);
+    } catch (_) {}
+    if (!res.ok) {
+      msgEl.textContent = detailFromHttpBody(text, parsed, res.status);
+      return false;
+    }
+    return true;
+  }
+
+  async function removeCart(gameId, msgEl) {
+    const res = await fetch(`/api/v1/cart/items/${gameId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    const text = await res.text();
+    let parsed = null;
+    try {
+      parsed = JSON.parse(text);
+    } catch (_) {}
+    if (!res.ok) {
+      msgEl.textContent = detailFromHttpBody(text, parsed, res.status);
+      return false;
+    }
+    return true;
+  }
+
+  document.querySelectorAll(".cart-row").forEach((row) => {
+    const gameId = Number(row.getAttribute("data-game-id"));
+    const msg = document.getElementById("cart-msg");
+    row.querySelector('[data-action="update"]')?.addEventListener("click", async () => {
+      msg.textContent = "";
+      const input = row.querySelector("[data-qty-input]");
+      const q = Math.min(99, Math.max(1, parseInt(String(input.value), 10) || 1));
+      input.value = String(q);
+      const ok = await patchCart(gameId, q, msg);
+      if (ok) window.location.reload();
+    });
+    row.querySelector('[data-action="remove"]')?.addEventListener("click", async () => {
+      msg.textContent = "";
+      const ok = await removeCart(gameId, msg);
+      if (ok) window.location.reload();
+    });
+  });
+</script>
+{% endblock %}

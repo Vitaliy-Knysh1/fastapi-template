@@ -41,6 +41,8 @@ class GamePublic(GameBase):
     thumbnail_path: str | None = None
     price_uah: int = 0
     units_purchased: int = 0
+    luck_wins_count: int = 0
+    luck_losses_count: int = 0
     tags: list[str] = Field(default_factory=list)
 
     model_config = {"from_attributes": True}
@@ -66,6 +68,8 @@ class GamePublic(GameBase):
             thumbnail_path=game.thumbnail_path,
             price_uah=game.price_uah,
             units_purchased=game.units_purchased,
+            luck_wins_count=game.luck_wins_count,
+            luck_losses_count=game.luck_losses_count,
             tags=tags,
         )
 

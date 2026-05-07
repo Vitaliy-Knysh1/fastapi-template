@@ -8,6 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 
 if TYPE_CHECKING:
+    from app.models.cart_item import CartItem
     from app.models.game_comment import GameComment
     from app.models.genre import Genre
     from app.models.order_line import OrderLine
@@ -27,6 +28,8 @@ class Game(Base):
     units_purchased: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
     tags_json: Mapped[str | None] = mapped_column(Text, nullable=True)
     price_uah: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    luck_wins_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    luck_losses_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
 
     genre: Mapped[Genre] = relationship(back_populates="games")
     order_lines: Mapped[list[OrderLine]] = relationship(back_populates="game")
@@ -34,3 +37,4 @@ class Game(Base):
         back_populates="game",
         cascade="all, delete-orphan",
     )
+    cart_items: Mapped[list["CartItem"]] = relationship(back_populates="game")

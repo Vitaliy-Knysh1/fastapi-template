@@ -24,7 +24,7 @@ logger = logging.getLogger("uvicorn.error")
 
 templates = Jinja2Templates(directory=str(ROOT_DIR / "templates"))
 
-app = FastAPI(title="Videogame Store API")
+app = FastAPI(title="Luckygames Shop API")
 
 
 def _db_fail_message(exc: Exception) -> str:

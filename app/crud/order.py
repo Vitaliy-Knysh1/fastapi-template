@@ -10,7 +10,9 @@ from app.schemas.order import OrderCreate, OrderUpdate
 async def refresh_order_total(db: AsyncSession, order_id: int) -> None:
     result = await db.execute(select(OrderLine).where(OrderLine.order_id == order_id))
     lines = list(result.scalars().all())
-    total = sum(line.quantity * line.unit_price_cents + line.wheel_adjustment_cents for line in lines)
+    total = sum(
+        line.quantity * (line.unit_price_cents + line.wheel_adjustment_cents) for line in lines
+    )
     order = await db.get(Order, order_id)
     if order is None:
         return
@@ -19,7 +21,12 @@ async def refresh_order_total(db: AsyncSession, order_id: int) -> None:
 
 
 async def create_order(db: AsyncSession, payload: OrderCreate) -> Order:
-    order = Order(user_id=payload.user_id, status=payload.status, total_cents=0)
+    order = Order(
+        user_id=payload.user_id,
+        status=payload.status,
+        total_cents=0,
+        billing_snapshot_json=payload.billing_snapshot_json,
+    )
     db.add(order)
     await db.flush()
     await db.refresh(order)

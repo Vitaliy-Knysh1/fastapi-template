@@ -366,3 +366,152 @@ code {
   padding: 0.15rem 0.35rem;
   border-radius: 4px;
 }
+
+.cart-link {
+  position: relative;
+}
+
+.cart-badge:empty {
+  display: none;
+}
+
+.cart-badge:not(:empty) {
+  display: inline-block;
+  margin-left: 0.25rem;
+  min-width: 1.15rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  text-align: center;
+  background: var(--accent);
+  color: #fff;
+}
+
+.cart-page.panel {
+  max-width: 42rem;
+}
+
+.cart-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.cart-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.cart-row:last-child {
+  border-bottom: none;
+}
+
+.cart-title {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.cart-title:hover {
+  color: var(--accent-hover);
+}
+
+.cart-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cart-qty input {
+  width: 4rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.btn-sm {
+  padding: 0.3rem 0.55rem;
+  font-size: 0.88rem;
+}
+
+.cart-line-sum {
+  font-variant-numeric: tabular-nums;
+  min-width: 5rem;
+  text-align: right;
+}
+
+.cart-footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.checkout-page.panel {
+  max-width: 36rem;
+}
+
+.checkout-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.checkout-form input {
+  padding: 0.5rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.card-surface {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.luck-lines {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+}
+
+.luck-lines li {
+  padding: 0.35rem 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.luck-total {
+  font-size: 1.1rem;
+  margin: 0.75rem 0 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.game-detail-buy {
+  margin: 0 0 1rem;
+}
+
+.account-page.panel {
+  max-width: 36rem;
+}
+
+.profile-bio {
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.profile-hint {
+  margin-top: 1rem;
+}

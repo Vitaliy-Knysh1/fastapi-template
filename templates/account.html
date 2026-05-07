@@ -1,17 +1,41 @@
 {% extends "base.html" %}
-{% block title %}Account{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 {% block content %}
-<section class="panel">
-  <h1>Your account</h1>
-  {% if user %}
-    <dl class="kv">
-      <dt>Email</dt><dd>{{ user.email }}</dd>
-      <dt>Name</dt><dd>{{ user.name }}</dd>
-      <dt>User ID</dt><dd>{{ user.id }}</dd>
-    </dl>
-    <p class="muted">Protected API examples: <code>/api/v1/account/stats</code>, <code>/api/v1/orders/me</code>, <code>/api/v1/users/me</code>.</p>
+<section class="panel account-page">
+  {% if is_own_profile %}
+    <h1>Your account</h1>
   {% else %}
-    <p>Please <a href="/login">log in</a> to view your account.</p>
+    <h1>{{ member.name }}</h1>
+    <p class="muted">Public profile</p>
+  {% endif %}
+
+  <dl class="kv">
+    <dt>Name</dt><dd>{{ member.name }}</dd>
+    {% if member_profile and member_profile.display_name %}
+      <dt>Display name</dt><dd>{{ member_profile.display_name }}</dd>
+    {% endif %}
+    {% if is_own_profile %}
+      <dt>Email</dt><dd>{{ member.email }}</dd>
+    {% endif %}
+    <dt>User ID</dt><dd>{{ member.id }}</dd>
+    {% if member_profile and member_profile.bio %}
+      <dt>Bio</dt><dd class="profile-bio">{{ member_profile.bio }}</dd>
+    {% endif %}
+    {% if member_profile and member_profile.country %}
+      <dt>Country</dt><dd>{{ member_profile.country }}</dd>
+    {% endif %}
+  </dl>
+
+  {% if is_own_profile %}
+    <p class="muted">
+      Protected API examples:
+      <code>/api/v1/account/stats</code>,
+      <code>/api/v1/orders/me</code>,
+      <code>/api/v1/users/me</code>.
+    </p>
+    <p class="muted profile-hint">
+      Tip: anyone can view a profile at <code>/account/{{ member.id }}</code> — replace the ID to see another shopper.
+    </p>
   {% endif %}
 </section>
 {% endblock %}

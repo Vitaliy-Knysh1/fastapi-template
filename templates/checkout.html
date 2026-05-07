@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<section class="panel checkout-page">
+  <h1>Checkout</h1>
+  <p class="muted">Payments are simulated — no real charge is made.</p>
+
+  <form id="checkout-form" class="stack checkout-form">
+    <label>Full name<input type="text" name="full_name" required maxlength="200" autocomplete="name" /></label>
+    <label>Email<input type="email" name="email" required maxlength="320" autocomplete="email" /></label>
+    <label>Phone<input type="tel" name="phone" required maxlength="40" autocomplete="tel" /></label>
+    <label>Address<input type="text" name="address_line1" required maxlength="300" autocomplete="street-address" /></label>
+    <label>City<input type="text" name="city" required maxlength="120" autocomplete="address-level2" /></label>
+    <label>Postal code<input type="text" name="postal_code" required maxlength="32" autocomplete="postal-code" /></label>
+    <label>Country<input type="text" name="country" value="UA" maxlength="80" autocomplete="country-name" /></label>
+    <button type="submit" class="btn btn-primary">Confirm</button>
+    <p id="checkout-msg" class="form-msg" aria-live="polite"></p>
+  </form>
+
+  <div id="luck-step" class="luck-step card-surface" hidden>
+    <h2>Almost there</h2>
+    <p class="muted">Details saved for this session. Finalize your order with the store’s luck check.</p>
+    <button type="button" id="btn-luck" class="btn btn-primary">Test your luck</button>
+  </div>
+
+  <div id="checkout-result" class="checkout-result card-surface" hidden>
+    <h2>Order complete</h2>
+    <ul id="luck-lines" class="luck-lines"></ul>
+    <p id="luck-total" class="luck-total"></p>
+    <a class="btn btn-primary" href="/">Back to store</a>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  let billingPayload = null;
+
+  document.getElementById("checkout-form")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const msg = document.getElementById("checkout-msg");
+    msg.textContent = "";
+    const fd = new FormData(e.target);
+    billingPayload = {
+      full_name: String(fd.get("full_name") || "").trim(),
+      email: String(fd.get("email") || "").trim(),
+      phone: String(fd.get("phone") || "").trim(),
+      address_line1: String(fd.get("address_line1") || "").trim(),
+      city: String(fd.get("city") || "").trim(),
+      postal_code: String(fd.get("postal_code") || "").trim(),
+      country: String(fd.get("country") || "UA").trim() || "UA",
+    };
+    e.target.setAttribute("hidden", "");
+    document.getElementById("luck-step")?.removeAttribute("hidden");
+  });
+
+  document.getElementById("btn-luck")?.addEventListener("click", async () => {
+    const msg = document.getElementById("checkout-msg");
+    msg.textContent = "";
+    if (!billingPayload) {
+      msg.textContent = "Confirm billing details first.";
+      return;
+    }
+    try {
+      const res = await fetch("/api/v1/checkout/complete", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(billingPayload),
+      });
+      const text = await res.text();
+      let parsed = null;
+      try {
+        parsed = JSON.parse(text);
+      } catch (_) {}
+      if (!res.ok) {
+        msg.textContent = detailFromHttpBody(text, parsed, res.status);
+        return;
+      }
+      const data = parsed;
+      const ul = document.getElementById("luck-lines");
+      ul.innerHTML = "";
+      (data.lines || []).forEach((line) => {
+        const adj = line.adjustment_uah_per_unit;
+        const sign = adj > 0 ? "+" : "";
+        const li = document.createElement("li");
+        li.textContent = `${line.title}: ${sign}${adj} UAH`;
+        ul.appendChild(li);
+      });
+      document.getElementById("luck-total").textContent =
+        "Total: " + data.total_uah + " UAH (order #" + data.order_id + ")";
+      document.getElementById("luck-step")?.setAttribute("hidden", "");
+      document.getElementById("checkout-result")?.removeAttribute("hidden");
+    } catch (err) {
+      msg.textContent = "Network error.";
+    }
+  });
+</script>
+{% endblock %}

@@ -8,7 +8,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    app_name: str = "Videogame Store"
+    app_name: str = "Luckygames Shop"
     database_url: str = "postgresql://postgres:postgres@localhost:5432/app"
 
     jwt_secret: str = Field(

@@ -4,7 +4,8 @@ from pydantic import BaseModel, Field
 class OrderLineBase(BaseModel):
     quantity: int = Field(..., gt=0)
     unit_price_cents: int = Field(..., ge=0)
-    wheel_adjustment_cents: int = Field(default=0, ge=-1, le=1)
+    # Per-unit luck delta in kopiykas (±100 = ±1 UAH); legacy rows may use ±1.
+    wheel_adjustment_cents: int = Field(default=0, ge=-1000, le=1000)
 
 
 class OrderLineCreate(OrderLineBase):
@@ -15,7 +16,7 @@ class OrderLineCreate(OrderLineBase):
 class OrderLineUpdate(BaseModel):
     quantity: int | None = Field(None, gt=0)
     unit_price_cents: int | None = Field(None, ge=0)
-    wheel_adjustment_cents: int | None = Field(None, ge=-1, le=1)
+    wheel_adjustment_cents: int | None = Field(None, ge=-1000, le=1000)
 
 
 class OrderLinePublic(OrderLineBase):

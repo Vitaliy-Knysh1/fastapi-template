@@ -18,6 +18,18 @@
       <p class="muted game-detail-stat">
         <strong>Purchased:</strong> {{ game.units_purchased }} copies
       </p>
+      <p class="muted game-detail-stat">
+        <strong>Luck wheel (community):</strong>
+        {{ game.luck_wins_count }} wins · {{ game.luck_losses_count }} losses
+      </p>
+      {% if user %}
+      <div class="game-detail-buy">
+        <button type="button" class="btn btn-primary" id="btn-add-cart">Add to cart</button>
+        <p id="add-cart-msg" class="form-msg" aria-live="polite"></p>
+      </div>
+      {% else %}
+      <p class="muted"><a href="/login">Log in</a> to add this game to your cart.</p>
+      {% endif %}
       <div class="tag-row">
         <span class="tag tag-genre">{{ game.genre_name }}</span>
         {% for tag in game.tags %}
@@ -68,6 +80,35 @@
 {% block scripts %}
 {% if user %}
 <script>
+  document.getElementById("btn-add-cart")?.addEventListener("click", async () => {
+    const msg = document.getElementById("add-cart-msg");
+    msg.textContent = "";
+    try {
+      const res = await fetch("/api/v1/cart/items", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ game_id: {{ game.id }}, quantity: 1 }),
+      });
+      const text = await res.text();
+      let parsed = null;
+      try {
+        parsed = JSON.parse(text);
+      } catch (_) {}
+      if (!res.ok) {
+        msg.textContent = detailFromHttpBody(text, parsed, res.status);
+        return;
+      }
+      msg.textContent = "Added to cart.";
+      const badge = document.getElementById("cart-badge");
+      if (badge && parsed && parsed.item_count !== undefined) {
+        badge.textContent = parsed.item_count > 0 ? String(parsed.item_count) : "";
+      }
+    } catch (err) {
+      msg.textContent = "Network error.";
+    }
+  });
+
   document.getElementById("form-comment")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const fd = new FormData(e.target);

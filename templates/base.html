@@ -3,17 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{% block title %}{{ title | default("Store") }}{% endblock %} · Videogame Store</title>
-  <link rel="stylesheet" href="/static/style.css?v=6" />
+  <title>{% block title %}{{ title | default("Store") }}{% endblock %} · {{ app_name | default("Luckygames Shop") }}</title>
+  <link rel="stylesheet" href="/static/style.css?v=8" />
 </head>
 <body>
   <header class="site-header">
     <div class="header-inner">
-      <a class="logo" href="/">{{ app_name | default("Videogame Store") }}</a>
+      <a class="logo" href="/">{{ app_name | default("Luckygames Shop") }}</a>
       <nav class="header-actions">
         {% if user %}
+          <a class="btn btn-ghost cart-link" href="/cart">Cart <span id="cart-badge" class="cart-badge" aria-live="polite"></span></a>
           <span class="header-greeting">Hi, {{ user.name }}</span>
-          <a class="btn btn-ghost" href="/account">Account</a>
+          <a class="btn btn-ghost" href="/account/{{ user.id }}">Account</a>
           <button type="button" class="btn btn-primary" id="btn-logout">Log out</button>
         {% else %}
           <a class="btn btn-ghost" href="/login">Log in</a>
@@ -49,6 +50,22 @@
       await fetch("/api/v1/auth/logout", { method: "POST", credentials: "include" });
       window.location.href = "/";
     });
+
+    (async function refreshCartBadge() {
+      const el = document.getElementById("cart-badge");
+      if (!el) return;
+      try {
+        const res = await fetch("/api/v1/cart", { credentials: "include" });
+        if (res.status === 401) {
+          el.textContent = "";
+          return;
+        }
+        if (!res.ok) return;
+        const data = await res.json();
+        const n = data.item_count || 0;
+        el.textContent = n > 0 ? String(n) : "";
+      } catch (_) {}
+    })();
   </script>
   {% block scripts %}{% endblock %}
 </body>

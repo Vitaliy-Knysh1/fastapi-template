@@ -41,12 +41,12 @@ STOREFRONT_SPECS: list[dict[str, object]] = [
     {
         "slug": "balatro",
         "title": "Balatro",
-        "genre_name": "Puzzle",
-        "genre_slug": "puzzle",
+        "genre_name": "Roguelike",
+        "genre_slug": "roguelike",
         "description": "Poker-inspired roguelike deckbuilder with wild synergies and endless runs.",
         "price_uah": 325,
         "thumbnail_path": "images/games/balatro.png",
-        "tags": ["Roguelike", "Deckbuilder", "Indie"],
+        "tags": ["Deckbuilder", "Indie"],
         "stock": 80,
     },
     {
@@ -57,7 +57,7 @@ STOREFRONT_SPECS: list[dict[str, object]] = [
         "description": "Rhythm-based platformer — jump, fly, and crash through iconic levels to the beat.",
         "price_uah": 124,
         "thumbnail_path": "images/games/geometry_dash.png",
-        "tags": ["Platformer", "Rhythm", "Arcade"],
+        "tags": ["Platformer", "Rhythm", "Indie"],
         "stock": 200,
     },
     {
@@ -79,7 +79,7 @@ STOREFRONT_SPECS: list[dict[str, object]] = [
         "description": "Rebuild of a classic — school life by day, dungeon-crawling with Personas by night.",
         "price_uah": 1799,
         "thumbnail_path": "images/games/persona3.png",
-        "tags": ["JRPG", "Turn-based", "Story-rich"],
+        "tags": ["JRPG", "Turn-based", "Narrative"],
         "stock": 45,
     },
     {
@@ -90,7 +90,7 @@ STOREFRONT_SPECS: list[dict[str, object]] = [
         "description": "Investigate a rural mystery, forge bonds, and dive into the TV world.",
         "price_uah": 649,
         "thumbnail_path": "images/games/persona4.png",
-        "tags": ["JRPG", "Mystery", "Social sim"],
+        "tags": ["JRPG", "Turn-based", "Narrative"],
         "stock": 55,
     },
     {
@@ -101,7 +101,7 @@ STOREFRONT_SPECS: list[dict[str, object]] = [
         "description": "Art-driven turn-based RPG with a haunting world and expedition beyond the unknown.",
         "price_uah": 1499,
         "thumbnail_path": "images/games/expedition_33.png",
-        "tags": ["Turn-based", "Narrative", "French RPG"],
+        "tags": ["Turn-based", "Narrative", "French RPG", "Indie"],
         "stock": 40,
     },
     {

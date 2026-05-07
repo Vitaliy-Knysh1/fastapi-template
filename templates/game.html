@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}{{ game.title }}{% endblock %}
+{% block content %}
+<article class="game-detail">
+  <a class="back-link" href="/">← Back to catalog</a>
+
+  <div class="game-detail-hero">
+    <img
+      class="game-detail-cover"
+      src="/static/{{ game.thumbnail_path }}"
+      alt=""
+      width="410"
+      height="550"
+    />
+    <div class="game-detail-meta">
+      <h1>{{ game.title }}</h1>
+      <p class="game-detail-price">{{ game.price_uah }}&nbsp;₴</p>
+      <p class="muted game-detail-stat">
+        <strong>Purchased:</strong> {{ game.units_purchased }} copies
+      </p>
+      <div class="tag-row">
+        <span class="tag tag-genre">{{ game.genre_name }}</span>
+        {% for tag in game.tags %}
+        <span class="tag">{{ tag }}</span>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {% if game.description %}
+  <section class="game-description">
+    <h2>About</h2>
+    <p>{{ game.description }}</p>
+  </section>
+  {% endif %}
+
+  <section class="comments-section" aria-label="Comments">
+    <h2>Comments</h2>
+    {% if user %}
+    <form id="form-comment" class="comment-form stack">
+      <label>
+        Add a comment
+        <textarea name="body" rows="4" required maxlength="4000" placeholder="Share your thoughts…"></textarea>
+      </label>
+      <button type="submit" class="btn btn-primary">Post</button>
+      <p id="comment-msg" class="form-msg" aria-live="polite"></p>
+    </form>
+    {% else %}
+    <p class="muted"><a href="/login">Log in</a> to leave a comment.</p>
+    {% endif %}
+
+    <ul class="comment-list">
+      {% for c in comments %}
+      <li class="comment-item">
+        <div class="comment-head">
+          <strong>{{ c.author_name }}</strong>
+          <time datetime="{{ c.created_at.isoformat() }}">{{ c.created_at.strftime("%Y-%m-%d %H:%M") }}</time>
+        </div>
+        <p class="comment-body">{{ c.body }}</p>
+      </li>
+      {% else %}
+      <li class="muted">No comments yet.</li>
+      {% endfor %}
+    </ul>
+  </section>
+</article>
+{% endblock %}
+{% block scripts %}
+{% if user %}
+<script>
+  document.getElementById("form-comment")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const body = String(fd.get("body") || "").trim();
+    const msg = document.getElementById("comment-msg");
+    msg.textContent = "";
+    try {
+      const res = await fetch("/api/v1/games/by-slug/{{ game.slug }}/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ body }),
+      });
+      const text = await res.text();
+      let parsed = null;
+      try {
+        parsed = JSON.parse(text);
+      } catch (_) {}
+      if (!res.ok) {
+        msg.textContent = detailFromHttpBody(text, parsed, res.status);
+        return;
+      }
+      window.location.reload();
+    } catch (err) {
+      msg.textContent = "Network error.";
+    }
+  });
+</script>
+{% endif %}
+{% endblock %}

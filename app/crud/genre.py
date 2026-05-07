@@ -17,6 +17,11 @@ async def get_genre(db: AsyncSession, genre_id: int) -> Genre | None:
     return await db.get(Genre, genre_id)
 
 
+async def get_genre_by_slug(db: AsyncSession, slug: str) -> Genre | None:
+    result = await db.execute(select(Genre).where(Genre.slug == slug))
+    return result.scalar_one_or_none()
+
+
 async def list_genres(db: AsyncSession, skip: int = 0, limit: int = 100) -> list[Genre]:
     result = await db.execute(select(Genre).offset(skip).limit(limit).order_by(Genre.id))
     return list(result.scalars().all())

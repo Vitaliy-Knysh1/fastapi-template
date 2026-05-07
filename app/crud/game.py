@@ -1,5 +1,6 @@
-from sqlalchemy import select
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.models.game import Game
 from app.schemas.game import GameCreate, GameUpdate
@@ -22,17 +23,39 @@ async def list_games(db: AsyncSession, skip: int = 0, limit: int = 100) -> list[
     return list(result.scalars().all())
 
 
+async def list_storefront_games(db: AsyncSession) -> list[Game]:
+    result = await db.execute(
+        select(Game)
+        .where(and_(Game.thumbnail_path.isnot(None), Game.thumbnail_path != ""))
+        .order_by(Game.id),
+    )
+    return list(result.scalars().all())
+
+
+async def get_game_by_slug(db: AsyncSession, slug: str) -> Game | None:
+    result = await db.execute(
+        select(Game).options(selectinload(Game.genre)).where(Game.slug == slug),
+    )
+    return result.scalar_one_or_none()
+
+
 async def replace_game(db: AsyncSession, game_id: int, payload: GameCreate) -> Game | None:
     game = await get_game(db, game_id)
     if game is None:
         return None
     data = payload.model_dump()
-    game.genre_id = data["genre_id"]
-    game.title = data["title"]
-    game.slug = data["slug"]
-    game.description = data["description"]
-    game.price_cents = data["price_cents"]
-    game.stock = data["stock"]
+    for key in (
+        "genre_id",
+        "title",
+        "slug",
+        "description",
+        "price_cents",
+        "stock",
+        "thumbnail_path",
+        "price_uah",
+        "tags_json",
+    ):
+        setattr(game, key, data[key])
     await db.flush()
     await db.refresh(game)
     return game

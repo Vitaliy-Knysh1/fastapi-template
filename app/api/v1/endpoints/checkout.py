@@ -10,6 +10,7 @@ from app.crud import order_line as line_crud
 from app.schemas.checkout import CheckoutBilling, CheckoutCompleteResponse, CheckoutLuckLine
 from app.schemas.order import OrderCreate
 from app.schemas.order_line import OrderLineCreate
+from app.monitoring.metrics import record_purchase_total
 
 router = APIRouter()
 
@@ -98,6 +99,7 @@ async def checkout_complete(
 
     total_cents = order.total_cents
     total_uah = round(total_cents / 100.0, 2)
+    record_purchase_total(total_cents=total_cents)
 
     return CheckoutCompleteResponse(
         order_id=order.id,

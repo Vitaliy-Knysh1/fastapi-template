@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Unavailable{% endblock %}
+{% block content %}
+<section class="panel" style="max-width: 36rem;">
+  <h1>Database unavailable</h1>
+  <p class="form-msg">{{ message }}</p>
+  <p class="muted">
+    Typical fixes: start PostgreSQL; set <code>DATABASE_URL</code>; run
+    <code>python -m alembic upgrade head</code>; then <code>python scripts/seed_db.py</code>.
+    In Docker: <code>docker compose up -d</code> and check <code>docker compose logs web</code>.
+  </p>
+  <p><a class="btn btn-primary" href="/">Back to home</a></p>
+</section>
+{% endblock %}

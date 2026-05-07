@@ -122,6 +122,21 @@ body {
   max-width: calc((100% - 3 * 1.25rem) / 4);
 }
 
+.game-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.game-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.game-title a:hover {
+  color: var(--accent-hover);
+}
+
 /* Source art 410×550 — match aspect ratio; contain avoids cropping. */
 .game-cover {
   display: block;
@@ -152,6 +167,141 @@ body {
   .catalog-grid > .game-card {
     flex: 0 0 calc((100% - 1 * 1.25rem) / 2);
     max-width: calc((100% - 1 * 1.25rem) / 2);
+  }
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.25rem;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.back-link:hover {
+  color: var(--accent-hover);
+}
+
+.game-detail {
+  max-width: 52rem;
+}
+
+.game-detail-hero {
+  display: grid;
+  grid-template-columns: minmax(180px, 280px) 1fr;
+  gap: 1.75rem;
+  align-items: start;
+  margin-bottom: 2rem;
+}
+
+.game-detail-cover {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 410 / 550;
+  object-fit: contain;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.game-detail-meta h1 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.65rem;
+}
+
+.game-detail-price {
+  font-size: 1.35rem;
+  margin: 0 0 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.game-detail-stat {
+  margin: 0 0 1rem;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.25rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.tag-genre {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.game-description {
+  margin-bottom: 2rem;
+}
+
+.game-description h2 {
+  margin-top: 0;
+  font-size: 1.15rem;
+}
+
+.comments-section h2 {
+  margin-top: 0;
+  font-size: 1.15rem;
+}
+
+.comment-form textarea {
+  padding: 0.55rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  resize: vertical;
+}
+
+.comment-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0 0;
+}
+
+.comment-item {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.88rem;
+  margin-bottom: 0.35rem;
+}
+
+.comment-head time {
+  color: var(--muted);
+}
+
+.comment-body {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.45;
+}
+
+@media (max-width: 640px) {
+  .game-detail-hero {
+    grid-template-columns: 1fr;
   }
 }
 

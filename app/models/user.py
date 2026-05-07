@@ -27,3 +27,4 @@ class User(Base):
 
     profile: Mapped[Profile | None] = relationship(back_populates="user", uselist=False)
     orders: Mapped[list[Order]] = relationship(back_populates="user")
+    game_comments: Mapped[list["GameComment"]] = relationship(back_populates="user")

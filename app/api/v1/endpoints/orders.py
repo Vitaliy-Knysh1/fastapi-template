@@ -1,10 +1,16 @@
 from fastapi import APIRouter, HTTPException, status
 
-from app.api.deps import DbSession
+from app.api.deps import CurrentUser, DbSession
 from app.crud import order as order_crud
 from app.schemas.order import OrderCreate, OrderDetail, OrderPublic, OrderUpdate
 
 router = APIRouter()
+
+
+@router.get("/me", response_model=list[OrderPublic])
+async def list_my_orders(user: CurrentUser, db: DbSession) -> list[OrderPublic]:
+    orders = await order_crud.list_orders_for_user(db, user.id)
+    return [OrderPublic.model_validate(o) for o in orders]
 
 
 @router.get("/", response_model=list[OrderPublic])

@@ -19,6 +19,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     email: Mapped[str] = mapped_column(String(320), unique=True, index=True)
     name: Mapped[str] = mapped_column(String(200))
+    password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),

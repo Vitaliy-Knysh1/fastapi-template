@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<section class="panel">
+  <h1>Create account</h1>
+  <p class="muted">Passwords are stored hashed (bcrypt). Min 8 characters.</p>
+  <form id="form-register" class="stack">
+    <label>Name<input type="text" name="name" required minlength="1" maxlength="200" autocomplete="name" /></label>
+    <label>Email<input type="email" name="email" required autocomplete="email" /></label>
+    <label>Password<input type="password" name="password" required minlength="8" maxlength="128" autocomplete="new-password" /></label>
+    <button type="submit" class="btn btn-primary">Register</button>
+    <p id="reg-msg" class="form-msg" aria-live="polite"></p>
+  </form>
+  <p class="muted">Already have an account? <a href="/login">Log in</a></p>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  document.getElementById("form-register").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const body = {
+      name: String(fd.get("name") || "").trim(),
+      email: String(fd.get("email") || "").trim(),
+      password: String(fd.get("password") || ""),
+    };
+    const msg = document.getElementById("reg-msg");
+    msg.textContent = "";
+    try {
+      const res = await fetch("/api/v1/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const text = await res.text();
+      let parsed = null;
+      try {
+        parsed = JSON.parse(text);
+      } catch (_) {
+        /* non-JSON e.g. HTML traceback */
+      }
+      if (!res.ok) {
+        msg.textContent = detailFromHttpBody(text, parsed, res.status);
+        return;
+      }
+      window.location.href = "/login?registered=1";
+    } catch (err) {
+      msg.textContent = "Network error.";
+    }
+  });
+</script>
+{% endblock %}

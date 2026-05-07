@@ -1,10 +1,23 @@
 from fastapi import APIRouter, HTTPException, status
 
-from app.api.deps import DbSession
+from app.api.deps import CurrentUser, DbSession
 from app.crud import user as user_crud
-from app.schemas.user import UserCreate, UserPublic
+from app.schemas.user import UserCreate, UserPublic, UserUpdate
 
 router = APIRouter()
+
+
+@router.get("/me", response_model=UserPublic)
+async def read_me(user: CurrentUser) -> UserPublic:
+    return UserPublic.model_validate(user)
+
+
+@router.patch("/me", response_model=UserPublic)
+async def update_me(payload: UserUpdate, user: CurrentUser, db: DbSession) -> UserPublic:
+    updated = await user_crud.update_user(db, user.id, payload)
+    if updated is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return UserPublic.model_validate(updated)
 
 
 @router.get("/", response_model=list[UserPublic])

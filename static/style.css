@@ -1,0 +1,218 @@
+:root {
+  --bg: #0f1419;
+  --surface: #1a2332;
+  --text: #e7ecf3;
+  --muted: #8b98a8;
+  --accent: #3d8bfd;
+  --accent-hover: #5c9dff;
+  --border: #2a3545;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.logo {
+  color: var(--text);
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-greeting {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-right: 0.25rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text);
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-ghost {
+  border-color: var(--border);
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem;
+}
+
+.hero h1 {
+  margin-top: 0;
+}
+
+.lead {
+  color: var(--muted);
+  font-size: 1.05rem;
+  max-width: 42rem;
+}
+
+.catalog {
+  margin-top: 2rem;
+}
+
+/* Flex layout: reliable 4×2 on desktop (avoids single-column if Grid isn’t applied). */
+.catalog-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.catalog-grid > .game-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  /* Four cards per row; gap appears between columns only */
+  flex: 0 0 calc((100% - 3 * 1.25rem) / 4);
+  max-width: calc((100% - 3 * 1.25rem) / 4);
+}
+
+/* Source art 410×550 — match aspect ratio; contain avoids cropping. */
+.game-cover {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 410 / 550;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.game-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.game-price {
+  margin: 0;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 720px) {
+  .catalog-grid > .game-card {
+    flex: 0 0 calc((100% - 1 * 1.25rem) / 2);
+    max-width: calc((100% - 1 * 1.25rem) / 2);
+  }
+}
+
+.panel {
+  max-width: 28rem;
+}
+
+.panel h1 {
+  margin-top: 0;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.stack label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.stack input {
+  padding: 0.5rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.form-msg {
+  min-height: 1.25rem;
+  color: #f87171;
+  font-size: 0.9rem;
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 0.5rem 1rem;
+}
+
+.kv dt {
+  color: var(--muted);
+  margin: 0;
+}
+
+.kv dd {
+  margin: 0;
+}
+
+code {
+  font-size: 0.85rem;
+  background: var(--surface);
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+}

@@ -7,10 +7,10 @@ from app.api.deps import CurrentUser, DbSession
 from app.crud import cart as cart_crud
 from app.crud import order as order_crud
 from app.crud import order_line as line_crud
+from app.monitoring.metrics import record_purchase_total
 from app.schemas.checkout import CheckoutBilling, CheckoutCompleteResponse, CheckoutLuckLine
 from app.schemas.order import OrderCreate
 from app.schemas.order_line import OrderLineCreate
-from app.monitoring.metrics import record_purchase_total
 
 router = APIRouter()
 

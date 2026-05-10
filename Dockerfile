@@ -5,12 +5,15 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN pip install --no-cache-dir poetry
+
+COPY pyproject.toml poetry.lock* /app/
+RUN poetry config virtualenvs.create false \
+  && poetry install --no-interaction --no-ansi --no-root
 
 COPY . /app
 
 EXPOSE 8000
 
-CMD ["python", "entrypoint.py"]
+CMD ["poetry", "run", "python", "entrypoint.py"]
 

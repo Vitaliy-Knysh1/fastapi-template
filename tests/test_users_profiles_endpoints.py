@@ -4,10 +4,10 @@ from tests.conftest import register_and_login
 
 
 @pytest.mark.anyio
-async def test_users_me_and_list_and_get(client):
+async def test_auth_me_and_users_list_and_get(client):
     u = await register_and_login(client, email="u@test.com")
 
-    r = await client.get("/api/v1/users/me")
+    r = await client.get("/api/v1/auth/me")
     assert r.status_code == 200
     assert r.json()["id"] == u["id"]
 

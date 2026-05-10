@@ -17,7 +17,6 @@ if sys.platform == "win32":
 
 
 def _test_db_url() -> str:
-    # Override with TEST_DATABASE_URL if needed.
     return os.environ.get(
         "TEST_DATABASE_URL",
         "postgresql://postgres:postgres@localhost:5432/app_test",
@@ -25,13 +24,8 @@ def _test_db_url() -> str:
 
 
 def _ensure_test_db_exists(url: str) -> None:
-    """
-    Creates the test database if it's missing.
-    Uses psycopg2 (sync) to connect to the default `postgres` database.
-    """
     import psycopg2
 
-    # Very small parser for postgresql://user:pass@host:port/dbname
     dbname = url.rsplit("/", 1)[-1].split("?", 1)[0]
     admin_url = url.rsplit("/", 1)[0] + "/postgres"
 
@@ -55,7 +49,6 @@ def _alembic_cfg(test_db_url: str) -> Config:
 
 @pytest.fixture(scope="session", autouse=True)
 def _configure_test_env() -> None:
-    # Must be set before importing app settings / engine modules.
     os.environ["DATABASE_URL"] = _test_db_url()
 
 
@@ -68,9 +61,8 @@ def _setup_test_database(_configure_test_env: None) -> None:
 
 @pytest.fixture(scope="session")
 def app(_setup_test_database: None):
-    # Import after env is configured so app uses the test DB.
     from app.db.session import get_db  # noqa: WPS433
-    from app.main import app as fastapi_app  # noqa: WPS433
+    from main import app as fastapi_app  # noqa: WPS433
 
     test_engine = create_async_engine(
         os.environ["DATABASE_URL"].replace("postgresql://", "postgresql+psycopg_async://", 1),
@@ -117,7 +109,6 @@ async def db_session(_test_engine) -> AsyncIterator[AsyncSession]:
 
 @pytest.fixture(autouse=True)
 async def _clean_db_between_tests(_test_engine) -> AsyncIterator[None]:
-    # Run test, then TRUNCATE all tables to keep tests isolated.
     yield
     from app.db.base import Base  # noqa: WPS433
 
@@ -138,4 +129,3 @@ async def register_and_login(client: AsyncClient, *, email: str = "t@example.com
     r = await client.post("/api/v1/auth/login", json={"email": email, "password": password})
     assert r.status_code == 200
     return r.json()["user"]
-

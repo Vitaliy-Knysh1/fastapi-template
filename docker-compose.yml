@@ -1,98 +1,37 @@
 services:
   web:
     build: .
-    container_name: fastapi-web
     ports:
-      - "8000:8000"
+      - "${WEB_PUBLISH_HOST:-127.0.0.1}:8000:8000"
+    env_file:
+      - .env
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/app
-      JWT_SECRET: dev-docker-compose-jwt-secret-not-for-production-use-env-in-real-deploy
-      # Pick up code edits without rebuilding the image (dev convenience).
-      UVICORN_RELOAD: "1"
-    volumes:
-      - ./app:/app/app
-      - ./templates:/app/templates
-      - ./static:/app/static
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      DOCKER_PUBLISH_HOST: ${WEB_PUBLISH_HOST:-127.0.0.1}
+      AUTO_SEED: ${AUTO_SEED:-1}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:16-alpine
-    container_name: fastapi-db
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: app
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5433:5432"
+      - "${WEB_PUBLISH_HOST:-127.0.0.1}:${POSTGRES_PUBLISH_PORT:-15432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
-  prometheus:
-    image: prom/prometheus:v2.54.1
-    container_name: fastapi-prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    depends_on:
-      - web
-      - db
-      - cadvisor
-      - postgres_exporter
-
-  grafana:
-    image: grafana/grafana:11.2.2
-    container_name: fastapi-grafana
-    ports:
-      - "3000:3000"
-    environment:
-      GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: admin
-      GF_USERS_ALLOW_SIGN_UP: "false"
-      GF_RENDERING_SERVER_URL: http://grafana_renderer:8081/render
-      GF_RENDERING_CALLBACK_URL: http://grafana:3000/
-      GF_LOG_FILTERS: rendering:debug
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
-    depends_on:
-      - prometheus
-      - grafana_renderer
-
-  grafana_renderer:
-    image: grafana/grafana-image-renderer:3.12.2
-    container_name: fastapi-grafana-renderer
-    environment:
-      ENABLE_METRICS: "true"
-    ports:
-      - "8081:8081"
-
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
-    container_name: fastapi-cadvisor
-    ports:
-      - "8080:8080"
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-    privileged: true
-
-  postgres_exporter:
-    image: prometheuscommunity/postgres-exporter:v0.15.0
-    container_name: fastapi-postgres-exporter
-    ports:
-      - "9187:9187"
-    environment:
-      DATA_SOURCE_NAME: postgresql://postgres:postgres@db:5432/app?sslmode=disable
-    depends_on:
-      - db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
 
 volumes:
   postgres_data:
-  grafana_data:
-

@@ -1,11 +1,9 @@
 from fastapi import APIRouter
-
 from sqlalchemy import func, select
 
 from app.api.deps import CurrentUser, DbSession
 from app.models.order import Order
 from app.schemas.account import AccountStats, AccountSummary
-from app.schemas.user import UserPublic
 
 router = APIRouter()
 
@@ -13,12 +11,6 @@ router = APIRouter()
 @router.get("/summary", response_model=AccountSummary)
 async def account_summary(user: CurrentUser) -> AccountSummary:
     return AccountSummary.model_validate(user)
-
-
-@router.get("/whoami", response_model=UserPublic)
-async def whoami(user: CurrentUser) -> UserPublic:
-    """Same as /auth/me — convenient alias under /account."""
-    return UserPublic.model_validate(user)
 
 
 @router.get("/stats", response_model=AccountStats)

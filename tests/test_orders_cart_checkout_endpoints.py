@@ -19,7 +19,6 @@ async def test_orders_and_order_lines_basic_crud(client):
     assert r.status_code == 200
     assert any(x["id"] == order_id for x in r.json())
 
-    # Need a game for an order line
     g = await client.post("/api/v1/genres/", json={"name": "Action", "slug": "action"})
     genre_id = g.json()["id"]
     game = await client.post(
@@ -76,7 +75,6 @@ async def test_orders_and_order_lines_basic_crud(client):
 async def test_cart_and_checkout_flow(client, monkeypatch):
     await register_and_login(client, email="checkout@test.com")
 
-    # Create game
     g = await client.post("/api/v1/genres/", json={"name": "Roguelike", "slug": "roguelike"})
     genre_id = g.json()["id"]
     game = await client.post(
@@ -95,7 +93,6 @@ async def test_cart_and_checkout_flow(client, monkeypatch):
     )
     game_id = game.json()["id"]
 
-    # Add to cart
     r = await client.post("/api/v1/cart/items", json={"game_id": game_id, "quantity": 2})
     assert r.status_code == 201
     assert r.json()["item_count"] == 2
@@ -104,10 +101,9 @@ async def test_cart_and_checkout_flow(client, monkeypatch):
     assert r.status_code == 200
     assert r.json()["subtotal_uah"] == 650
 
-    # Deterministic coin flip: win (random < 0.5)
-    import app.api.v1.endpoints.checkout as checkout_ep
+    import app.api.v1.routes.commerce.checkout as checkout_mod
 
-    monkeypatch.setattr(checkout_ep.random, "random", lambda: 0.1)
+    monkeypatch.setattr(checkout_mod.random, "random", lambda: 0.1)
 
     r = await client.post(
         "/api/v1/checkout/complete",
@@ -125,11 +121,8 @@ async def test_cart_and_checkout_flow(client, monkeypatch):
     data = r.json()
     assert data["lines"][0]["title"] == "Balatro"
     assert data["lines"][0]["adjustment_uah_per_unit"] == -1
-    # 2 copies, each 325 UAH - 1 UAH => 648 total
     assert data["total_uah"] == 648.0
 
-    # Cart is cleared
     r = await client.get("/api/v1/cart")
     assert r.status_code == 200
     assert r.json()["item_count"] == 0
-

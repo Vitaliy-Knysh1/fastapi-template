@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from app.core.config import settings
 
 if sys.platform == "win32":
-    # Psycopg async is incompatible with ProactorEventLoop on Windows.
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 engine = create_async_engine(settings.database_url_async, echo=False, pool_pre_ping=True)

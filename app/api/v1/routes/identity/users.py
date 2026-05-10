@@ -7,11 +7,6 @@ from app.schemas.user import UserCreate, UserPublic, UserUpdate
 router = APIRouter()
 
 
-@router.get("/me", response_model=UserPublic)
-async def read_me(user: CurrentUser) -> UserPublic:
-    return UserPublic.model_validate(user)
-
-
 @router.patch("/me", response_model=UserPublic)
 async def update_me(payload: UserUpdate, user: CurrentUser, db: DbSession) -> UserPublic:
     updated = await user_crud.update_user(db, user.id, payload)

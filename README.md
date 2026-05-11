@@ -8,6 +8,12 @@ Install dependencies with Poetry (`poetry install`). Start PostgreSQL. Copy `.en
 
 Application entrypoint: `main.py`. Docker: `docker compose up --build`.
 
+## Production vs lab-only content
+
+- **Docker image:** `.dockerignore` excludes `LABS/`, `monitoring/` (Grafana/Prometheus files), `docs/`, `tests/`, lab compose files, and similar so production builds stay small. You do not need to delete those from Git for deployment.
+- **`app/monitoring/`** stays in the image — it is application code for `/metrics`, not the Lab 7 stack.
+- **Prod Git branch without lab folders:** see `docs/prod_branch.txt` (optional; has merge caveats).
+
 ## Lab 6 — API tests
 
 Use the Poetry environment so all dependencies load (including `prometheus_client`):

@@ -29,9 +29,10 @@
   {% if is_own_profile %}
     <p class="muted">
       Protected API examples:
+      <code>/api/v1/auth/me</code>,
       <code>/api/v1/account/stats</code>,
       <code>/api/v1/orders/me</code>,
-      <code>/api/v1/users/me</code>.
+      <code>PATCH /api/v1/users/me</code>.
     </p>
     <p class="muted profile-hint">
       Tip: anyone can view a profile at <code>/account/{{ member.id }}</code> — replace the ID to see another shopper.

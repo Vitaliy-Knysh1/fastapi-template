@@ -1,7 +1,6 @@
 services:
   web:
-    volumes:
-      - ./:/app
     environment:
       UVICORN_RELOAD: "1"
-    command: ["python", "entrypoint.py"]
+    volumes:
+      - ./:/app

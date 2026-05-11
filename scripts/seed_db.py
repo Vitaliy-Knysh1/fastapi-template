@@ -1,12 +1,4 @@
-"""
-Load sample data into all tables (async). Run after migrations.
-
-  set DATABASE_URL=postgresql://postgres:postgres@localhost:5432/app
-  python scripts/seed_db.py
-
-On Windows, the default ProactorEventLoop breaks async psycopg; this script uses a
-selector-based loop for `asyncio.run` (see Python 3.12+ `loop_factory`).
-"""
+"""Populate the database with demo catalog and optional sample users (run after migrations)."""
 
 from __future__ import annotations
 
@@ -36,7 +28,6 @@ from app.schemas.order import OrderCreate  # noqa: E402
 from app.schemas.order_line import OrderLineCreate  # noqa: E402
 from app.schemas.profile import ProfileCreate  # noqa: E402
 
-# Storefront catalog (UAH, paths relative to /static/)
 STOREFRONT_SPECS: list[dict[str, object]] = [
     {
         "slug": "balatro",

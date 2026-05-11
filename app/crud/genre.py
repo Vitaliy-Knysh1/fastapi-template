@@ -53,6 +53,6 @@ async def delete_genre(db: AsyncSession, genre_id: int) -> bool:
     genre = await get_genre(db, genre_id)
     if genre is None:
         return False
-    db.delete(genre)
+    await db.delete(genre)
     await db.flush()
     return True

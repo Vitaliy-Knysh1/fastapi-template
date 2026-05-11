@@ -1,4 +1,4 @@
-from sqlalchemy import and_, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -24,11 +24,7 @@ async def list_games(db: AsyncSession, skip: int = 0, limit: int = 100) -> list[
 
 
 async def list_storefront_games(db: AsyncSession) -> list[Game]:
-    result = await db.execute(
-        select(Game)
-        .where(and_(Game.thumbnail_path.isnot(None), Game.thumbnail_path != ""))
-        .order_by(Game.id),
-    )
+    result = await db.execute(select(Game).order_by(Game.id))
     return list(result.scalars().all())
 
 
@@ -76,6 +72,6 @@ async def delete_game(db: AsyncSession, game_id: int) -> bool:
     game = await get_game(db, game_id)
     if game is None:
         return False
-    db.delete(game)
+    await db.delete(game)
     await db.flush()
     return True

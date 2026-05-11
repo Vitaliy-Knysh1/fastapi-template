@@ -150,6 +150,20 @@ body {
   background: var(--surface);
 }
 
+.game-cover--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  object-fit: unset;
+}
+
+.game-cover-placeholder-text {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
 .game-title {
   margin: 0;
   font-size: 0.95rem;

@@ -6,5 +6,20 @@ __pycache__/
 .vscode/
 .git/
 .pytest_cache/
-poetry.lock
 
+LABS/
+monitoring/
+docs/
+.github/
+tests/
+
+docker-compose.monitoring.yml
+docker-compose.dev.yml
+
+lab2_commands.txt
+git_logs.txt
+
+scripts/run_lab6_tests.ps1
+scripts/run_lab6_tests.sh
+
+pytest.ini

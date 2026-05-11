@@ -11,6 +11,7 @@
     {% for game in games %}
     <article class="game-card">
       <a class="game-card-link" href="/games/{{ game.slug }}">
+        {% if game.thumbnail_path %}
         <img
           class="game-cover"
           src="/static/{{ game.thumbnail_path }}"
@@ -19,6 +20,11 @@
           height="550"
           loading="lazy"
         />
+        {% else %}
+        <div class="game-cover game-cover--placeholder" role="img" aria-label="{{ game.title }}">
+          <span class="game-cover-placeholder-text">{{ game.title[:1] }}</span>
+        </div>
+        {% endif %}
       </a>
       <h2 class="game-title">
         <a href="/games/{{ game.slug }}">{{ game.title }}</a>

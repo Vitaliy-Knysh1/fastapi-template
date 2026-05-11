@@ -16,6 +16,20 @@ if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
+def pytest_configure(config: pytest.Config) -> None:
+    try:
+        import prometheus_client  # noqa: F401
+    except ImportError:
+        pytest.exit(
+            "Tests require project dependencies (including prometheus_client).\n"
+            "From the project root run:\n"
+            "  poetry install\n"
+            "  poetry run pytest\n"
+            "Bare `pytest` uses your global Python and skips the Poetry venv.\n",
+            returncode=1,
+        )
+
+
 def _test_db_url() -> str:
     return os.environ.get(
         "TEST_DATABASE_URL",

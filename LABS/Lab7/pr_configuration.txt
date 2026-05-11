@@ -1,0 +1,79 @@
+global:
+  scrape_interval: 5s
+  scrape_timeout: 5s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText0.0.4
+  evaluation_interval: 1m
+runtime:
+  gogc: 75
+scrape_configs:
+- job_name: prometheus
+  honor_timestamps: true
+  track_timestamps_staleness: false
+  scrape_interval: 5s
+  scrape_timeout: 5s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText0.0.4
+  metrics_path: /metrics
+  scheme: http
+  enable_compression: true
+  follow_redirects: true
+  enable_http2: true
+  static_configs:
+  - targets:
+    - prometheus:9090
+- job_name: fastapi
+  honor_timestamps: true
+  track_timestamps_staleness: false
+  scrape_interval: 5s
+  scrape_timeout: 5s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText0.0.4
+  metrics_path: /metrics
+  scheme: http
+  enable_compression: true
+  follow_redirects: true
+  enable_http2: true
+  static_configs:
+  - targets:
+    - web:8000
+- job_name: postgres
+  honor_timestamps: true
+  track_timestamps_staleness: false
+  scrape_interval: 5s
+  scrape_timeout: 5s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText0.0.4
+  metrics_path: /metrics
+  scheme: http
+  enable_compression: true
+  follow_redirects: true
+  enable_http2: true
+  static_configs:
+  - targets:
+    - postgres_exporter:9187
+- job_name: cadvisor
+  honor_timestamps: true
+  track_timestamps_staleness: false
+  scrape_interval: 5s
+  scrape_timeout: 5s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText0.0.4
+  metrics_path: /metrics
+  scheme: http
+  enable_compression: true
+  follow_redirects: true
+  enable_http2: true
+  static_configs:
+  - targets:
+    - cadvisor:8080

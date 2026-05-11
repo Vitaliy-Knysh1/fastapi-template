@@ -22,11 +22,20 @@ def run_optional_seed() -> None:
     if os.environ.get("SKIP_SEED", "").lower() in {"1", "true", "yes"}:
         return
     root = os.path.dirname(os.path.abspath(__file__))
-    subprocess.run(
+    result = subprocess.run(
         [sys.executable, "scripts/seed_db.py"],
-        check=True,
         cwd=root,
+        capture_output=True,
+        text=True,
     )
+    if result.returncode != 0:
+        msg = (result.stderr or result.stdout or "").strip()
+        print(
+            "AUTO_SEED failed; home catalog may be empty. Run: poetry run python scripts/seed_db.py",
+            file=sys.stderr,
+        )
+        if msg:
+            print(msg, file=sys.stderr)
 
 
 def main() -> None:

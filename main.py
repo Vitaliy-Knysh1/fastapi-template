@@ -1,6 +1,9 @@
 import asyncio
+import os
+import subprocess
 import sys
 import time
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, Request, Response
@@ -20,6 +23,43 @@ if sys.platform == "win32":
 
 ROOT_DIR = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(ROOT_DIR / "templates"))
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    if sys.modules.get("pytest") is not None:
+        yield
+        return
+    if os.environ.get("AUTO_SEED", "1").lower() not in {"1", "true", "yes"}:
+        yield
+        return
+    if os.environ.get("SKIP_SEED", "").lower() in {"1", "true", "yes"}:
+        yield
+        return
+    from sqlalchemy import func, select
+
+    from app.db.session import AsyncSessionLocal
+    from app.models.game import Game
+
+    async with AsyncSessionLocal() as db:
+        n = (await db.execute(select(func.count()).select_from(Game))).scalar_one()
+    if n == 0:
+        r = subprocess.run(
+            [sys.executable, str(ROOT_DIR / "scripts" / "seed_db.py")],
+            cwd=str(ROOT_DIR),
+            capture_output=True,
+            text=True,
+        )
+        if r.returncode != 0:
+            print(
+                "Startup seed failed (empty catalog). Run: poetry run python scripts/seed_db.py",
+                file=sys.stderr,
+            )
+            out = (r.stderr or r.stdout or "").strip()
+            if out:
+                print(out, file=sys.stderr)
+    yield
+
 
 _API_METRIC_BUCKETS: tuple[tuple[str, str], ...] = (
     ("/api/v1/auth", "/api/v1/auth/*"),
@@ -45,7 +85,7 @@ def _metrics_api_path(path: str) -> str:
     return path
 
 
-app = FastAPI(title="Luckygames Shop API")
+app = FastAPI(title="Luckygames Shop API", lifespan=lifespan)
 
 
 @app.middleware("http")

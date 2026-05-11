@@ -1,6 +1,0 @@
-services:
-  web:
-    environment:
-      UVICORN_RELOAD: "1"
-    volumes:
-      - ./:/app
